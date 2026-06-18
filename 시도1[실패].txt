@@ -1,0 +1,118 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <iomanip>
+#include <sys/resource.h>
+#include <time.h>
+
+using namespace std;
+
+int main(){
+
+    cout << "계산할 수식을 입력해주세요 : ";
+    string input;
+    getline(cin, input);
+
+    cout << "입력된 수식: " << input << endl;
+    cout << "어떤걸 우선으로 계산할까요? (1. 메모리, 2. 속도) : ";
+    int choice;
+    cin >> choice;
+
+    switch(choice){
+        case 1:
+            cout << "메모리를 우선으로 계산합니다." << endl;
+            break;
+        case 2:
+            cout << "속도를 우선으로 계산합니다." << endl;
+            break;
+        default:
+            cout << "잘못된 선택입니다. 기본값으로 메모리를 우선으로 계산합니다." << endl;
+            break;
+    }
+
+    return 0;
+}
+
+long double Calculate(long double a, long double b, char oper){
+    switch(oper){
+        case '+':
+            return a + b;
+            break;
+        case '-':
+            return a - b;
+            break;
+        case '*':
+            return a * b;
+            break;
+        case '/':
+            return a / b;
+            break;
+        default:
+            return -100000000000;
+            break;
+    }
+}
+
+int memory_priority_calculation(const string& expression){
+    stack<int> numbers;
+    stack<int> operators;
+
+    string tempParent, tempNumbers;
+    long double tempNum;
+    int ParentStart, ParentEnd;
+
+    
+    for(int i = 0; i < expression.size(); i++){
+
+        if(ParentStart < i){
+            tempParent.push_back(expression[i]);
+        }
+
+        switch(expression[i]){
+            case '(':
+                ParentStart = i;
+                tempParent = "";
+                break;
+            case ')':
+                ParentEnd = i;
+                for(int i = ParentStart + 1; i < ParentEnd; i++){
+                    switch(expression[i]){
+                        case '+':
+                            operators.push(1);
+                            numbers.push(stoi(tempNumbers));
+                            tempNumbers = "";
+                            break;
+                        case '-':
+                            operators.push(2);
+                            numbers.push(stoi(tempNumbers));
+                            tempNumbers = "";
+                            break;
+                        case '*':
+                            operators.push(3);
+                            numbers.push(stoi(tempNumbers));
+                            tempNumbers = "";
+                            break;
+                        case '/':
+                            operators.push(4);
+                            numbers.push(stoi(tempNumbers));
+                            tempNumbers = "";
+                            break;
+                        default:
+                            if(expression[i] != ' ') tempNumbers.push_back(expression[i]);
+                    }
+                }
+
+                while(!numbers.empty()){
+                    tempNum
+                }
+                break;
+        }
+
+        
+        
+        // 계산 기호 연산
+        
+    }
+
+    return 0;
+}
