@@ -2,6 +2,8 @@
 #include <string>
 #include <algorithm>
 #include <math.h>
+#include <cmath>
+#include <limits>
 
 using namespace std;
 
@@ -101,11 +103,14 @@ long double simpleCal(char op, long double a, long double b){
         case '*':
             return Multiply(a, b);
         case '/':
+            if(b == 0) return numeric_limits<long double>::quiet_NaN();
             return Division(a, b);
         case '^':
             return powl(a, b);
         case 'v':
             return SqrtLong(a, b);
+        default:
+            return numeric_limits<long double>::quiet_NaN();
 
     }
 }
@@ -126,7 +131,7 @@ long double Calculate(string& input)
             //return input.substr(index - LNumberStr.length, )
         }
 
-        int index = findFirstIndex(input.find('+'), input.find('-'));
+        index = findFirstIndex(input.find('+'), input.find('-'));
         
         if(index > -1){
             string LNumberStr = findLNumber(input, index);
@@ -137,7 +142,13 @@ long double Calculate(string& input)
             
             long double result = simpleCal(input[index], LNumber, RNumber);
         }
+
+        if(index == -1){
+            break;
+        }
     }
+
+    return stold(input);
 }
 #pragma endregion
 
@@ -150,7 +161,7 @@ int main(){
 
     cout << "입력된 수식: " << input << endl;
     long double result = Calculate(input);
-    if(result == -1) cout << "잘못된 수식입니다!";
+    if(isnan(result)) cout << "잘못된 수식입니다!";
 
     return 0;
 }
