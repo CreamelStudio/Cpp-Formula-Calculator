@@ -123,7 +123,7 @@ long double Calculate(string& input)
             long double RNumber = stold(RNumberStr);
             
             long double result = simpleCal(input[index], LNumber, RNumber);
-            return input.substr(index - LNumberStr.length, sub1.length() - l_number.length()) + to_string(result) + sub2.substr(r_number.length());
+            //return input.substr(index - LNumberStr.length, )
         }
 
         int index = findFirstIndex(input.find('+'), input.find('-'));
