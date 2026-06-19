@@ -8,17 +8,6 @@
 using namespace std;
 
 #pragma region Utils
-long double ExStold(string a){
-    long double temp = 0;
-    try{
-        temp = stold(a);
-    }
-    catch(exception e){
-        return numeric_limits<long double>::quiet_NaN();
-    }
-    return temp;
-}
-
 bool IsOp(char a){
     return (a == '+' || a == '-' || a == '*' || a == '/' || a == '^' || a == 'v');
 }
@@ -53,6 +42,33 @@ long double SqrtLong(long double a, long double b){
     return temp;
 }
 
+bool IsUnaryMinus(const string& str, int i) {
+    return str[i] == '-' && (i == 0 || IsOp(str[i - 1]) || str[i - 1] == '(');
+}
+
+int findFirstAddSub(const string& input) {
+    for (int i = 0; i < input.length(); i++) {
+        if (input[i] == '+') return i;
+
+        if (input[i] == '-' && !IsUnaryMinus(input, i)) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+long double ExStold(string a){
+    long double temp = 0;
+    try{
+        temp = stold(a);
+    }
+    catch(exception e){
+        return numeric_limits<long double>::quiet_NaN();
+    }
+    return temp;
+}
+
 int findFirstIndex(int a, int b){
     if(b == -1) return a;
     else if(a == -1) return b;
@@ -68,7 +84,7 @@ string findLNumber(string str, int middleIndex){
         if (!IsOp(str[i])) {
             cnt++;
         }
-        else if(IsMinus(str[i]) && IsOp(str[i - 1])){
+        else if(IsMinus(str[i]) && IsUnaryMinus(str, i)){
             isMinus = true;
             break;
         }
@@ -88,8 +104,9 @@ string findRNumber(string str, int middleIndex){
         if (!IsOp(str[i])) {
             cnt++;
         }
-        else if(IsMinus(str[i]) && IsOp(str[i - 1])){
+        else if(middleIndex + 1 < str.length() && IsUnaryMinus(str, middleIndex + 1)){
             isMinus = true;
+            middleIndex++;
             break;
         }
         else
@@ -191,7 +208,7 @@ long double Calculate(string& input)
     }
     while(1){
 
-        int index = findFirstIndex(input.find('+'), input.find('-'));
+        int index = findFirstAddSub(input);
         
         if(index > -1){
             string LNumberStr = findLNumber(input, index);
