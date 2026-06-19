@@ -5,6 +5,10 @@
 #include <cmath>
 #include <limits>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 using namespace std;
 
 #pragma region Utils
@@ -231,6 +235,11 @@ long double Calculate(string& input)
 #pragma endregion
 
 int main(){
+    #ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+    #endif
+
     string input;
     cout << "계산할 수식을 입력해주세요 : ";
     getline(cin, input);
