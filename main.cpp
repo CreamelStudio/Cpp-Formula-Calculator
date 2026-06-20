@@ -176,6 +176,8 @@ long double Calculate(string& input)
                 string baseFormula = input.substr(Lindex + 1, Rindex - Lindex - 1);
                 long double result = Calculate(baseFormula);
                 input = input.substr(0, Lindex) + to_string(result) + input.substr(Rindex + 1);
+
+                break;
             }
         }
 
