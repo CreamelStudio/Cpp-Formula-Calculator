@@ -12,10 +12,15 @@
 using namespace std;
 
 #pragma region Utils
+long double round_digit(long double num, int d)
+{
+	long double t = pow(10, d - 1);
+	return round(num * t) / t;
+}
+
 bool IsOp(char a){
     return (a == '+' || a == '-' || a == '*' || a == '/' || a == '^' || a == 'v');
 }
-
 
 long double Sum(long double a, long double b){
     return a + b;
@@ -169,7 +174,6 @@ long double Calculate(string& input)
 
                 Rindex = i;
                 string baseFormula = input.substr(Lindex + 1, Rindex - Lindex - 1);
-                cout << "Fomula Cal : " << baseFormula << "\n";
                 long double result = Calculate(baseFormula);
                 input = input.substr(0, Lindex) + to_string(result) + input.substr(Rindex + 1);
             }
@@ -190,8 +194,6 @@ long double Calculate(string& input)
             string LNumberStr = findLNumber(input, index);
             string RNumberStr = findRNumber(input, index);
 
-            cout << LNumberStr << " " << input[index] << " " << RNumberStr << "\n"; 
-
             long double LNumber = ExStold(LNumberStr);
             long double RNumber = ExStold(RNumberStr);
             
@@ -209,8 +211,6 @@ long double Calculate(string& input)
             string LNumberStr = findLNumber(input, index);
             string RNumberStr = findRNumber(input, index);
 
-            cout << LNumberStr << " " << input[index] << " " << RNumberStr << "\n"; 
-
             long double LNumber = ExStold(LNumberStr);
             long double RNumber = ExStold(RNumberStr);
             
@@ -227,8 +227,6 @@ long double Calculate(string& input)
         if(index > -1){
             string LNumberStr = findLNumber(input, index);
             string RNumberStr = findRNumber(input, index);
-
-            cout << LNumberStr << " " << input[index] << " " << RNumberStr << "\n"; 
 
             long double LNumber = ExStold(LNumberStr);
             long double RNumber = ExStold(RNumberStr);
@@ -259,9 +257,7 @@ int main(){
     cout << "입력된 수식: " << input << endl;
     long double result = Calculate(input);
     if(isnan(result)) cout << "잘못된 수식입니다!";
-    else cout << "답 : " << result << "\n";
+    else cout << "답 : " << round_digit(result, 6) << "\n";
 
     return 0;
 }
-
-
