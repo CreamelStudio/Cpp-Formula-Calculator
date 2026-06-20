@@ -16,9 +16,6 @@ bool IsOp(char a){
     return (a == '+' || a == '-' || a == '*' || a == '/' || a == '^' || a == 'v');
 }
 
-bool IsMinus(char a){
-    return (a =='-');
-}
 
 long double Sum(long double a, long double b){
     return a + b;
@@ -50,9 +47,16 @@ bool IsUnaryMinus(const string& str, int i) {
     return str[i] == '-' && (i == 0 || IsOp(str[i - 1]) || str[i - 1] == '(');
 }
 
+bool IsUnaryPlus(const string& str, int i) {
+    return str[i] == '+' && (i == 0 || IsOp(str[i - 1]) || str[i - 1] == '(');
+}
+
 int findFirstAddSub(const string& input) {
     for (int i = 0; i < input.length(); i++) {
-        if (input[i] == '+') return i;
+
+        if (input[i] == '+' && !IsUnaryPlus(input, i)){
+            return i;
+        }
 
         if (input[i] == '-' && !IsUnaryMinus(input, i)) {
             return i;
@@ -65,7 +69,10 @@ int findFirstAddSub(const string& input) {
 long double ExStold(string a){
     long double temp = 0;
     try{
-        temp = stold(a);
+        size_t length = 0;
+        temp = stold(a, &length);
+
+        if(length != a.length()) return numeric_limits<long double>::quiet_NaN();
     }
     catch(exception e){
         return numeric_limits<long double>::quiet_NaN();
@@ -88,8 +95,8 @@ string findLNumber(string str, int middleIndex){
         if (!IsOp(str[i])) {
             cnt++;
         }
-        else if(IsMinus(str[i]) && IsUnaryMinus(str, i)){
-            isMinus = true;
+        else if(IsUnaryMinus(str, i) || IsUnaryPlus(str, i)){
+            isMinus = str[i] == '-';
             break;
         }
         else
@@ -108,13 +115,14 @@ string findRNumber(string str, int middleIndex){
         if (!IsOp(str[i])) {
             cnt++;
         }
-        else if(middleIndex + 1 < str.length() && IsUnaryMinus(str, middleIndex + 1)){
-            isMinus = true;
-            middleIndex++;
-            break;
+        else if(str[middleIndex + 1] == '+' || str[middleIndex + 1] == '-'){
+            if(IsUnaryPlus(str, middleIndex + 1) || IsUnaryMinus(str, middleIndex + 1)){
+                if(str[middleIndex + 1] == '-') isMinus = true;
+                middleIndex++;
+            }
+            
         }
-        else
-            break;
+        else break;
     }
     if (cnt == 0)
         return "";
@@ -157,6 +165,8 @@ long double Calculate(string& input)
                 Lindex = i;
             }
             else if(input[i] == ')'){
+                if(Lindex == -1) return numeric_limits<long double>::quiet_NaN();
+
                 Rindex = i;
                 string baseFormula = input.substr(Lindex + 1, Rindex - Lindex - 1);
                 cout << "Fomula Cal : " << baseFormula << "\n";
@@ -186,7 +196,7 @@ long double Calculate(string& input)
             long double RNumber = ExStold(RNumberStr);
             
             long double result = simpleCal(input[index], LNumber, RNumber);
-            input = input.substr(0, index - LNumberStr.length()) + to_string(result) + input.substr(index + 1, RNumberStr.length());
+            input = input.substr(0, index - LNumberStr.length()) + to_string(result) + input.substr(index + 1 + RNumberStr.length());
         }
         
         if(index == -1) break;
@@ -205,7 +215,7 @@ long double Calculate(string& input)
             long double RNumber = ExStold(RNumberStr);
             
             long double result = simpleCal(input[index], LNumber, RNumber);
-            input = input.substr(0, index - LNumberStr.length()) + to_string(result) + input.substr(index + 1, RNumberStr.length());
+            input = input.substr(0, index - LNumberStr.length()) + to_string(result) + input.substr(index + 1 + RNumberStr.length());
         }
         
         if(index == -1) break;
