@@ -332,18 +332,23 @@ int main(){
     SetConsoleCP(CP_UTF8);
     #endif
 
-    string input;
-    cout << "계산할 수식을 입력해주세요 : ";
-    getline(cin, input);
+    while(1){
+        string input;
+        cout << "계산할 수식을 입력해주세요 (EXIT) : ";
+        getline(cin, input);
 
-    input.erase(remove(input.begin(), input.end(), ' '), input.end());
+        if(input == "EXIT") break;
+        input.erase(remove(input.begin(), input.end(), ' '), input.end());
 
-    cout << "입력된 수식: " << input << endl;
-    long double result = Calculate(input);
+        cout << "입력된 수식: " << input << endl;
+        long double result = Calculate(input);
 
-    cout << setprecision(5) << fixed;
-    if(isnan(result)) cout << "잘못된 수식입니다!";
-    else cout << "답 : " << round_digit(result, 6) << "\n";
+        cout << setprecision(5) << fixed;
+        if(isnan(result)) cout << "잘못된 수식입니다!";
+        else cout << "답 : " << round_digit(result, 6) << "\n";
+    }
+
+    
 
     return 0;
 }
