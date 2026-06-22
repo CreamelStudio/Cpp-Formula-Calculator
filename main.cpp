@@ -98,12 +98,14 @@ int findFirstIndex(int a, int b){
 string findLNumber(string str, int middleIndex){
     int cnt = 0;
     bool isMinus = false;
+    bool isPlus = false;
     for (int i = middleIndex - 1; i > -1; i--) {
         if (!IsOp(str[i])) {
             cnt++;
         }
         else if(IsUnaryMinus(str, i) || IsUnaryPlus(str, i)){
             isMinus = str[i] == '-';
+            isPlus = str[i] == '+';
             break;
         }
         else
@@ -111,20 +113,26 @@ string findLNumber(string str, int middleIndex){
     }
     if (cnt == 0)
         return "";
-    else
-        return (isMinus ? "-" : "") + str.substr(middleIndex - cnt, cnt);
+    else{
+        string prefix = "";
+        if(isMinus) prefix += "-";
+        if(isPlus) prefix += "+";
+        return prefix + str.substr(middleIndex - cnt, cnt);
+    }
 }
 
 string findRNumber(string str, int middleIndex){
     int cnt = 0;
     bool isMinus = false;
+    bool isPlus = false;
     for (int i = middleIndex + 1; i < str.length(); i++) {
         if (!IsOp(str[i])) {
             cnt++;
         }
         else if(str[middleIndex + 1] == '+' || str[middleIndex + 1] == '-'){
             if(IsUnaryPlus(str, middleIndex + 1) || IsUnaryMinus(str, middleIndex + 1)){
-                if(str[middleIndex + 1] == '-') isMinus = true;
+                isMinus = str[middleIndex + 1] == '-';
+                isPlus = str[middleIndex + 1] == '+';
                 middleIndex++;
             }
             
@@ -133,8 +141,12 @@ string findRNumber(string str, int middleIndex){
     }
     if (cnt == 0)
         return "";
-    else
-        return (isMinus ? "-" : "") + str.substr(middleIndex + 1, cnt);
+    else{
+        string prefix = "";
+        if(isMinus) prefix += "-";
+        if(isPlus) prefix += "+";
+        return prefix + str.substr(middleIndex + 1, cnt);
+    }
 }
 #pragma endregion
 
