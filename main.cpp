@@ -4,12 +4,14 @@
 #include <math.h>
 #include <cmath>
 #include <limits>
+#include <iomanip>
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
 using namespace std;
+const long double PI = 3.141592653589793238;
 
 #pragma region Utils
 long double round_digit(long double num, int d)
@@ -20,6 +22,14 @@ long double round_digit(long double num, int d)
 
 bool IsOp(char a){
     return (a == '+' || a == '-' || a == '*' || a == '/' || a == '^' || a == 'v');
+}
+
+long double Trigonometric(string a, long double b){
+    if(a == "cos") return cosl(b * PI / 180);
+    if(a == "sin") return sinl(b * PI / 180);
+    if(a == "tan") return tanl(b * PI / 180);
+
+    return numeric_limits<long double>::quiet_NaN();
 }
 
 long double Sum(long double a, long double b){
@@ -36,16 +46,6 @@ long double Multiply(long double a, long double b){
 
 long double Division(long double a, long double b){
     return a / b;
-}
-
-long double SqrtLong(long double a, long double b){
-    if(b == 0) return a;
-    long double temp = a;
-    for(int i = 0; i < b; i++){
-        temp = sqrt(temp);
-    }
-
-    return temp;
 }
 
 bool IsUnaryMinus(const string& str, int i) {
@@ -72,6 +72,8 @@ int findFirstAddSub(const string& input) {
 }
 
 long double ExStold(string a){
+    if(a == "INF" || a == "INFINITY" || a == "NAN") return numeric_limits<long double>::quiet_NaN();
+
     long double temp = 0;
     try{
         size_t length = 0;
@@ -153,7 +155,7 @@ long double simpleCal(char op, long double a, long double b){
         case '^':
             return powl(a, b);
         case 'v':
-            return SqrtLong(a, b);
+            return sqrtl(a);
         default:
             return numeric_limits<long double>::quiet_NaN();
 
@@ -189,8 +191,49 @@ long double Calculate(string& input)
         }
     }
 
+    #pragma region Cos_Sin_Tan
     while(1){
-        int index = findFirstIndex(input.find('^'), input.find('v'));
+        int cosI = input.find("cos");
+        int sinI = input.find("sin");
+        int tanI = input.find("tan");
+
+        if(cosI > -1){
+            string RNumberStr = findRNumber(input, cosI + 2);
+
+            long double RNumber = ExStold(RNumberStr);
+            
+            long double result = Trigonometric("cos", RNumber);
+            input = input.substr(0, cosI) + to_string(result) + input.substr(cosI + 3 + RNumberStr.length());
+            continue;
+        }
+
+        if(sinI > -1){
+            string RNumberStr = findRNumber(input, sinI + 2);
+
+            long double RNumber = ExStold(RNumberStr);
+            
+            long double result = Trigonometric("sin", RNumber);
+            input = input.substr(0, sinI) + to_string(result) + input.substr(sinI + 3 + RNumberStr.length());
+            continue;
+        }
+
+        if(tanI > -1){
+            string RNumberStr = findRNumber(input, tanI + 2);
+
+            long double RNumber = ExStold(RNumberStr);
+            
+            long double result = Trigonometric("tan", RNumber);
+            input = input.substr(0, tanI) + to_string(result) + input.substr(tanI + 3 + RNumberStr.length());
+            continue;
+        }
+
+        break;
+    }
+    #pragma endregion
+
+    #pragma region Square_Root
+    while(1){
+        int index = input.find('^');
 
         if(index > -1){
             string LNumberStr = findLNumber(input, index);
@@ -205,6 +248,23 @@ long double Calculate(string& input)
         
         if(index == -1) break;
     }
+
+    while(1){
+        int index = input.find('v');
+
+        if(index > -1){
+            string LNumberStr = "";
+            string RNumberStr = findRNumber(input, index);
+
+            long double RNumber = ExStold(RNumberStr);
+            
+            long double result = simpleCal(input[index], RNumber, 0);
+            input = input.substr(0, index - LNumberStr.length()) + to_string(result) + input.substr(index + 1 + RNumberStr.length());
+        }
+        
+        if(index == -1) break;
+    }
+    #pragma endregion
 
     while(1){
         int index = findFirstIndex(input.find('*'), input.find('/'));
@@ -258,6 +318,8 @@ int main(){
 
     cout << "입력된 수식: " << input << endl;
     long double result = Calculate(input);
+
+    cout << setprecision(5) << fixed;
     if(isnan(result)) cout << "잘못된 수식입니다!";
     else cout << "답 : " << round_digit(result, 6) << "\n";
 
