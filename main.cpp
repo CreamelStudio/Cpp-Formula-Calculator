@@ -14,38 +14,9 @@ using namespace std;
 const long double PI = 3.141592653589793238;
 
 #pragma region Utils
-long double round_digit(long double num, int d)
-{
-	long double t = pow(10, d - 1);
-	return round(num * t) / t;
-}
-
+#pragma region Check_Operation
 bool IsOp(char a){
     return (a == '+' || a == '-' || a == '*' || a == '/' || a == '^' || a == 'v');
-}
-
-long double Trigonometric(string a, long double b){
-    if(a == "cos") return cosl(b * PI / 180);
-    if(a == "sin") return sinl(b * PI / 180);
-    if(a == "tan") return tanl(b * PI / 180);
-
-    return numeric_limits<long double>::quiet_NaN();
-}
-
-long double Sum(long double a, long double b){
-    return a + b;
-}
-
-long double Minus(long double a, long double b){
-    return a - b;
-}
-
-long double Multiply(long double a, long double b){
-    return a * b;
-}
-
-long double Division(long double a, long double b){
-    return a / b;
 }
 
 bool IsUnaryMinus(const string& str, int i) {
@@ -54,6 +25,14 @@ bool IsUnaryMinus(const string& str, int i) {
 
 bool IsUnaryPlus(const string& str, int i) {
     return str[i] == '+' && (i == 0 || IsOp(str[i - 1]) || str[i - 1] == '(');
+}
+
+long double Trigonometric(string a, long double b){
+    if(a == "cos") return cosl(b * PI / 180);
+    if(a == "sin") return sinl(b * PI / 180);
+    if(a == "tan") return tanl(b * PI / 180);
+
+    return numeric_limits<long double>::quiet_NaN();
 }
 
 int findFirstAddSub(const string& input) {
@@ -69,6 +48,32 @@ int findFirstAddSub(const string& input) {
     }
 
     return -1;
+}
+#pragma endregion
+
+#pragma region Basic_Cal
+long double Sum(long double a, long double b){
+    return a + b;
+}
+
+long double Minus(long double a, long double b){
+    return a - b;
+}
+
+long double Multiply(long double a, long double b){
+    return a * b;
+}
+
+long double Division(long double a, long double b){
+    return a / b;
+}
+#pragma endregion
+
+#pragma region Default_Utility_Fuction
+long double round_digit(long double num, int d)
+{
+	long double t = pow(10, d - 1);
+	return round(num * t) / t;
 }
 
 long double ExStold(string a){
@@ -149,6 +154,7 @@ string findRNumber(string str, int middleIndex){
     }
 }
 #pragma endregion
+#pragma endregion
 
 #pragma region Cal
 long double simpleCal(char op, long double a, long double b){
@@ -176,6 +182,7 @@ long double simpleCal(char op, long double a, long double b){
 
 long double Calculate(string& input)
 {
+    #pragma region Braket
     while(1){
         int Lindex = -1;
         int Rindex = -1;
@@ -202,6 +209,7 @@ long double Calculate(string& input)
             return numeric_limits<long double>::quiet_NaN();
         }
     }
+    #pragma endregion
 
     #pragma region Cos_Sin_Tan
     while(1){
@@ -277,7 +285,8 @@ long double Calculate(string& input)
         if(index == -1) break;
     }
     #pragma endregion
-
+    
+    #pragma region Basic_Operation
     while(1){
         int index = findFirstIndex(input.find('*'), input.find('/'));
 
@@ -311,7 +320,8 @@ long double Calculate(string& input)
 
         if(index == -1) break;
     }
-
+    #pragma endregion
+    
     return ExStold(input);
 }
 #pragma endregion
